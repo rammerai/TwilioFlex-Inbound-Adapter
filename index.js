@@ -1,6 +1,6 @@
 /**
   * Sample inbound integration showing how to use Twilio Flex
-  * with Rammer's websocket API as the inbound audio stream
+  * with Symbl's websocket API as the inbound audio stream
   */
 
 /* import necessary modules for the web-socket API */
@@ -14,6 +14,7 @@ const ws = new WebSocket.Server({ server });
 const WebSocketClient = require("websocket").client; 
 const wsc = new WebSocketClient();
 const request = require('request');
+const uuid = require('uuid').v4;
 
 /* Initalize connection handlers */
 
@@ -82,8 +83,8 @@ ws.on('connection', (conn) => {
       "meetingTitle": "Customer Call"
     },
     "speaker": {
-      "userId": "kunal.sinha@rammer.ai",
-      "name": "Kunal"
+      "userId": "john@example.com",
+      "name": "John"
     },
   }));
 });
@@ -92,7 +93,7 @@ ws.on('connection', (conn) => {
 
 const authOptions = {
   method: 'post',
-  url: 'https://api.rammer.ai/oauth2/token:generate',
+  url: 'https://api.symbl.ai/oauth2/token:generate',
   body: {
     type: "application",
     appId: process.env.APP_ID,
@@ -111,11 +112,11 @@ let auth = new Promise(resolve => {
   })
 });
 
-/* Connect to Rammer's Websocket API */
+/* Connect to Symbl's Websocket API */
 
 auth.then(body => {
   wsc.connect(
-    'wss://api.rammer.ai/v1/realtime/insights/1',
+    `wss://api.symbl.ai/v1/realtime/insights/${uuid()}`,
     null,
     null,
     { 'X-API-KEY': body.accessToken}
